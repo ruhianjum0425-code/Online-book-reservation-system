@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} — BookNest{% endblock %}
+{% block content %}
+<div class="row g-4 align-items-start">
+  <div class="col-md-4">
+    {% if book.cover_url %}<img src="{{ book.cover_url }}" class="detail-cover" alt="{{ book.title }}">{% else %}<div class="detail-fallback">📖</div>{% endif %}
+  </div>
+  <div class="col-md-8">
+    <span class="subject-tag">{{ book.subject_name or 'General' }}</span>
+    <h1 class="display-6 fw-bold mt-2">{{ book.title }}</h1>
+    <h5 class="text-muted">by {{ book.author }}</h5>
+    <hr>
+    <p class="lead">{{ book.description }}</p>
+    <div class="row g-3 mb-4">
+      <div class="col-sm-4"><div class="info-box"><small>ISBN</small><strong>{{ book.isbn or 'N/A' }}</strong></div></div>
+      <div class="col-sm-4"><div class="info-box"><small>Total copies</small><strong>{{ book.total_copies }}</strong></div></div>
+      <div class="col-sm-4"><div class="info-box"><small>Available</small><strong>{{ book.available_copies }}</strong></div></div>
+    </div>
+    {% if session.get('user_id') %}
+      {% if book.available_copies > 0 %}
+      <form method="post" action="{{ url_for('reserve', book_id=book.id) }}"><button class="btn btn-warning btn-lg px-4">Reserve this book</button></form>
+      <small class="text-muted d-block mt-2">Your reservation will hold one copy for 3 days.</small>
+      {% else %}<div class="alert alert-secondary">Currently unavailable. Please check again later.</div>{% endif %}
+    {% else %}
+      <a class="btn btn-dark btn-lg" href="{{ url_for('login') }}">Login to reserve</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}BookNest — Browse Books{% endblock %}
+{% block content %}
+<section class="hero p-4 p-lg-5 mb-4">
+  <div class="row align-items-center">
+    <div class="col-lg-8">
+      <span class="badge text-bg-warning mb-3">SMART LIBRARY RESERVATION</span>
+      <h1 class="display-5 fw-bold">Reserve the right book before you reach the library.</h1>
+      <p class="lead">Search books, explore subjects and reserve an available copy with a 3-day pickup window.</p>
+      <form class="row g-2 mt-3" method="get">
+        <div class="col-md-7"><input class="form-control form-control-lg" name="q" value="{{ q }}" placeholder="Search title, author or ISBN"></div>
+        <div class="col-md-3">
+          <select class="form-select form-select-lg" name="subject">
+            <option value="">All subjects</option>
+            {% for s in subjects %}<option value="{{ s.id }}" {% if selected_subject|string == s.id|string %}selected{% endif %}>{{ s.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2"><button class="btn btn-warning btn-lg w-100">Search</button></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-num">{{ stats.books }}</div><div>Total Books</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-num">{{ stats.subjects }}</div><div>Subjects</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-num">{{ stats.available }}</div><div>Copies Available</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-num">{{ stats.reservations }}</div><div>Active Reservations</div></div></div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div><h2 class="fw-bold mb-0">Book collection</h2><small class="text-muted">{{ books|length }} result(s)</small></div>
+</div>
+
+<div class="row g-4">
+{% for book in books %}
+  <div class="col-md-6 col-lg-4 col-xl-3">
+    <div class="book-card h-100">
+      {% if book.cover_url %}
+        <img src="{{ book.cover_url }}" class="book-cover" alt="{{ book.title }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="cover-fallback" style="display:none;">📖</div>
+      {% else %}
+        <div class="cover-fallback">📖</div>
+      {% endif %}
+      <div class="p-3">
+        <span class="subject-tag">{{ book.subject_name or 'General' }}</span>
+        <h5 class="mt-2 mb-1">{{ book.title }}</h5>
+        <div class="text-muted small mb-2">by {{ book.author }}</div>
+        <div class="small mb-3"><strong>{{ book.available_copies }}</strong> / {{ book.total_copies }} copies available</div>
+        <a class="btn btn-dark w-100" href="{{ url_for('book_detail', book_id=book.id) }}">View & Reserve</a>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="col-12"><div class="empty-state">No books match your search.</div></div>
+{% endfor %}
+</div>
+{% endblock %}

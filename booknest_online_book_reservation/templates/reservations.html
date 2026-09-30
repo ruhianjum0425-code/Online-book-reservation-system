@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}My Reservations — BookNest{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4"><div><h1 class="fw-bold">My Reservations</h1><p class="text-muted mb-0">Track your reserved books and pickup deadlines.</p></div><a class="btn btn-outline-dark" href="{{ url_for('index') }}">Browse books</a></div>
+<div class="row g-3">
+{% for r in reservations %}
+<div class="col-lg-6">
+  <div class="reservation-card">
+    <div><span class="subject-tag">{{ r.status }}</span><h5 class="mt-2">{{ r.title }}</h5><p class="text-muted mb-1">by {{ r.author }}</p>
+    <small>Reserved: {{ r.reserved_at|replace('T',' ') }}<br>Pickup deadline: <strong>{{ r.pickup_deadline|replace('T',' ') }}</strong></small></div>
+    {% if r.status == 'Reserved' %}<form method="post" action="{{ url_for('cancel_reservation', reservation_id=r.id) }}" onsubmit="return confirm('Cancel this reservation?')"><button class="btn btn-outline-danger btn-sm">Cancel</button></form>{% endif %}
+  </div>
+</div>
+{% else %}<div class="col-12"><div class="empty-state">You have no reservations yet.</div></div>{% endfor %}
+</div>
+{% endblock %}

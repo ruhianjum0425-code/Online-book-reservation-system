@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Register — BookNest{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="text-center mb-4"><div class="big-icon">📚</div><h2>Create account</h2><p class="text-muted">Join BookNest and reserve books online.</p></div>
+    <form method="post">
+      <label class="form-label">Full name</label><input class="form-control mb-3" name="name" required>
+      <label class="form-label">Email</label><input class="form-control mb-3" type="email" name="email" required>
+      <label class="form-label">Password</label><input class="form-control mb-4" type="password" name="password" minlength="6" required>
+      <button class="btn btn-warning w-100 btn-lg">Create account</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

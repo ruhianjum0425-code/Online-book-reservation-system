@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — BookNest{% endblock %}
+{% block content %}
+<div class="mb-4"><span class="badge text-bg-dark">ADMIN PANEL</span><h1 class="fw-bold mt-2">Library control center</h1><p class="text-muted">Manage books, subjects and reservations.</p></div>
+
+<div class="row g-3 mb-4">
+{% for label,value in [('Books',stats.books),('Users',stats.users),('Reservations',stats.reservations),('Active',stats.active)] %}
+<div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-num">{{ value }}</div><div>{{ label }}</div></div></div>
+{% endfor %}
+</div>
+
+<div class="row g-4">
+<div class="col-lg-5">
+<div class="panel p-4 mb-4"><h4>Add book</h4>
+<form method="post" action="{{ url_for('add_book') }}">
+<input class="form-control mb-2" name="title" placeholder="Book title" required>
+<input class="form-control mb-2" name="author" placeholder="Author" required>
+<input class="form-control mb-2" name="isbn" placeholder="ISBN">
+<select class="form-select mb-2" name="subject_id" required>{% for s in subjects %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select>
+<input class="form-control mb-2" type="number" min="1" name="copies" placeholder="Copies" required>
+<input class="form-control mb-2" name="cover_url" placeholder="Cover image URL (optional)">
+<textarea class="form-control mb-3" name="description" placeholder="Description"></textarea>
+<button class="btn btn-dark w-100">Add book</button>
+</form></div>
+
+<div class="panel p-4"><h4>Add subject</h4>
+<form method="post" action="{{ url_for('add_subject') }}">
+<input class="form-control mb-2" name="name" placeholder="Subject name" required>
+<textarea class="form-control mb-3" name="description" placeholder="Subject description"></textarea>
+<button class="btn btn-warning w-100">Add subject</button>
+</form></div>
+</div>
+
+<div class="col-lg-7">
+<div class="panel p-4 mb-4"><h4>Recent reservations</h4>
+<div class="table-responsive"><table class="table align-middle"><thead><tr><th>User</th><th>Book</th><th>Status</th><th></th></tr></thead><tbody>
+{% for r in reservations %}<tr><td>{{ r.user_name }}<br><small>{{ r.email }}</small></td><td>{{ r.title }}</td><td><span class="badge text-bg-light">{{ r.status }}</span></td><td>{% if r.status == 'Reserved' %}<form method="post" action="{{ url_for('complete_reservation', reservation_id=r.id) }}"><button class="btn btn-sm btn-success">Complete</button></form>{% endif %}</td></tr>{% else %}<tr><td colspan="4">No reservations.</td></tr>{% endfor %}
+</tbody></table></div></div>
+
+<div class="panel p-4"><h4>Book inventory</h4>
+<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Book</th><th>Subject</th><th>Available</th><th></th></tr></thead><tbody>
+{% for b in books %}<tr><td><strong>{{ b.title }}</strong><br><small>{{ b.author }}</small></td><td>{{ b.subject_name }}</td><td>{{ b.available_copies }}/{{ b.total_copies }}</td><td><form method="post" action="{{ url_for('delete_book', book_id=b.id) }}" onsubmit="return confirm('Delete this book?')"><button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>{% endfor %}
+</tbody></table></div></div>
+</div>
+</div>
+{% endblock %}
